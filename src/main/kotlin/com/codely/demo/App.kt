@@ -4,17 +4,25 @@ import java.time.LocalDate
 import java.time.Period
 import kotlin.system.exitProcess
 
-class Reader {
-    fun read() = readLine()
-}
-class Writer {
-    fun write(message: String) = println(message)
-}
-class Clock {
-    fun now(): LocalDate = LocalDate.now()
+/**
+ * Al pedir la introducción de la fecha lo hacemos por la linea de commandos, se han creado estos tres métodos para facilitar el testeo del cóidigo, ya que de esta manera podemos simular la entrada y salida de datos sin necesidad de usar la consola.
+ */
+open class Reader {
+    open fun read() = readlnOrNull()
 }
 
-class App(private val reader: Reader, private val writer: Writer, private val clock: Clock) {
+open class Writer {
+    open fun write(message: String) = println(message)
+}
+
+open class Clock {
+    open fun now(): LocalDate = LocalDate.now()
+}
+
+/**
+ *  Por defecto en Kotlin las clases son FINAL, al usar open, hacemos que esta pueda ser extendida.
+ */
+open class App(private val reader: Reader, private val writer: Writer, private val clock: Clock) {
     fun execute() {
         writer.write("Please enter a date with the format <yyyy-MM-dd>")
         val line = reader.read()
@@ -41,6 +49,8 @@ class App(private val reader: Reader, private val writer: Writer, private val cl
 
         writer.write("Bye!")
     }
+
+    protected open fun currentDate(): LocalDate = clock.now()
 
     private fun LocalDate.calculateDifferenceUntilToday() = with(Period.between(this, clock.now())) {
         when {
